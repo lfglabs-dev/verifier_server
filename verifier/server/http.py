@@ -56,13 +56,16 @@ class WebServer:
                 return web.json_response({"status": "error", "error": "invalid type"})
             nftid = params["nftid"]
 
-            if type == "discord":
-                reference = params["reference"]
-                user_id = self.tokens[reference]
-                await assert_discord(self.account, nftid, type, user_id)
-                txid = await self.account.confirm_validity(nftid, type, user_id)
-            else:
-                txid = 0
+            try:
+                if type == "discord":
+                    reference = params["reference"]
+                    user_id = self.tokens[reference]
+                    await assert_discord(self.account, nftid, type, user_id)
+                    txid = await self.account.confirm_validity(nftid, type, user_id)
+                else:
+                    txid = 0
+            except Exception:
+                return web.json_response({"status": "error", "error": "invalid proof"})
 
             return web.json_response({"status": "success", "txid": txid})
 
