@@ -34,11 +34,11 @@ class Account:
             )
 
     async def fetch_blockchain_id(self, nftid, type):
-        result = await self.contract.functions["getData"].call(nftid, type)
+        result = await self.contract.functions["get_data"].call(nftid, type)
         return result.data
 
     async def confirm_validity(self, nftid, type, data):
-        invocation = await self.contract.functions["confirmValidity"].invoke(
+        invocation = await self.contract.functions["confirm_validity"].invoke(
             nftid, type, data, max_fee=100_000_000_000_000
         )
         # await invocation.wait_for_acceptance()
