@@ -13,3 +13,7 @@ key = 11111111111111111111111111111111111111111111111111111111111111111111111111
 api_endpoint = "https://discord.com/api/v10"
 client_id = "11111111111111111111111111111111"
 client_secret = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+[twitter]
+api_endpoint = "https://api.twitter.com/2"
+client_id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

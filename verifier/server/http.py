@@ -1,4 +1,6 @@
-from verifications.discord import start_discord, assert_discord
+from verifications.discord import start_discord
+from verifications.twitter import start_twitter
+from account.account import assert_id
 from aiohttp import web
 import aiohttp_cors
 import asyncio
@@ -23,7 +25,8 @@ class WebServer:
             return web.json_response({"status": "error", "error": "invalid reference"})
 
         type = params["type"]
-        if type not in ["discord"]:
+        if type not in ["discord", "twitter"]:
+            print(type)
             return web.json_response({"status": "error", "error": "invalid type"})
 
         if type == "discord":
@@ -46,6 +49,27 @@ class WebServer:
                 }
             )
 
+        if type == "twitter":
+            code = params["code"]
+            try:
+                user_id, username, name = await start_twitter(self.conf, code)
+                print(user_id, username, name)
+            except Exception:
+                return web.json_response(
+                    {"status": "error", "error": "unable to query twitter data"}
+                )
+            self.tokens[reference] = int(user_id)
+            asyncio.create_task(self.remove_token(reference))
+
+            return web.json_response(
+                {
+                    "status": "success",
+                    "id": user_id,
+                    "username": username,
+                    "name": name,
+                }
+            )
+
         return web.json_response({"status": "error", "error": "invalid type"})
 
     async def verify(self, request):
@@ -60,7 +84,7 @@ class WebServer:
                 if type == "discord":
                     reference = params["reference"]
                     user_id = self.tokens[reference]
-                    await assert_discord(self.account, nftid, type, user_id)
+                    await assert_id(self.account, nftid, type, user_id)
                     txid = await self.account.confirm_validity(nftid, type, user_id)
                 else:
                     txid = 0

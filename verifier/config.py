@@ -34,6 +34,10 @@ class TomlConfig(Config):
         self.starknet_key = starknet["key"]
 
         discord = config["discord"]
-        self.api_endpoint = discord["api_endpoint"]
+        self.discord_api_endpoint = discord["api_endpoint"]
         self.discord_client_id = discord["client_id"]
         self.discord_client_secret = discord["client_secret"]
+
+        twitter = config["twitter"]
+        self.twitter_api_endpoint = twitter["api_endpoint"]
+        self.twitter_client_id = twitter["client_id"]

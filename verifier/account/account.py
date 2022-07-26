@@ -1,6 +1,7 @@
 from starknet_py.contract import Contract
 from starknet_py.net.account.account_client import AccountClient
 from starknet_py.net.signer.stark_curve_signer import KeyPair
+from verifications.common import BlockchainDiffersFromProof
 import json
 import os
 
@@ -43,3 +44,9 @@ class Account:
         )
         # await invocation.wait_for_acceptance()
         return invocation.hash
+
+
+async def assert_id(bot_account, nftid, data_type, data):
+    blockchain_user_id = await bot_account.fetch_blockchain_id(nftid, data_type)
+    if blockchain_user_id != data:
+        raise BlockchainDiffersFromProof()

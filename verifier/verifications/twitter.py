@@ -2,17 +2,17 @@ import aiohttp
 from .common import WrongRequestException
 
 
-async def start_discord(conf, code):
+async def start_twitter(conf, code):
 
     async with aiohttp.ClientSession() as session:
         resp = await session.post(
-            conf.discord_api_endpoint + "/oauth2/token",
+            conf.twitter_api_endpoint + "/oauth2/token",
             data={
-                "grant_type": "authorization_code",
                 "code": code,
-                "client_id": conf.discord_client_id,
-                "client_secret": conf.discord_client_secret,
-                "redirect_uri": "https://starknet.id/discord",
+                "grant_type": "authorization_code",
+                "client_id": conf.twitter_client_id,
+                "redirect_uri": "https://starknet.id/twitter",
+                "code_verifier": "challenge",
                 "scope": "identify",
             },
             headers={"Content-Type": "application/x-www-form-urlencoded"},
@@ -25,14 +25,15 @@ async def start_discord(conf, code):
         token = content["access_token"]
 
         resp = await session.get(
-            "https://discordapp.com/api/users/@me",
+            "https://api.twitter.com/2/users/me",
             headers={"Authorization": f"{token_type} {token}"},
         )
         if resp.status != 200:
             raise WrongRequestException()
         content = await resp.json()
-        user_id = content["id"]
-        username = content["username"]
-        discriminator = content["discriminator"]
+        data = content["data"]
+        user_id = data["id"]
+        name = data["name"]
+        username = data["username"]
 
-        return user_id, username, discriminator
+        return user_id, username, name
