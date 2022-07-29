@@ -26,7 +26,6 @@ class WebServer:
 
         type = params["type"]
         if type not in ["discord", "twitter"]:
-            print(type)
             return web.json_response({"status": "error", "error": "invalid type"})
 
         if type == "discord":
@@ -76,7 +75,7 @@ class WebServer:
         params = await request.json()
         try:
             type = params["type"]
-            if type not in ["discord"]:
+            if type not in ["discord", "twitter"]:
                 return web.json_response({"status": "error", "error": "invalid type"})
             nftid = params["nftid"]
 
