@@ -80,7 +80,7 @@ class WebServer:
             nftid = params["nftid"]
 
             try:
-                if type == "discord":
+                if type in ["discord", "twitter"]:
                     reference = params["reference"]
                     user_id = self.tokens[reference]
                     await assert_id(self.account, nftid, type, user_id)
