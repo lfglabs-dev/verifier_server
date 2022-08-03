@@ -29,9 +29,9 @@ class TomlConfig(Config):
         self.server_port = server["port"]
 
         starknet = config["starknet"]
-        self.starknetid_contract = starknet["contract"]
-        self.starknet_address = starknet["address"]
-        self.starknet_key = starknet["key"]
+        self.starknetid_contract = starknet["starknetid_contract"]
+        self.verifier_contract = starknet["verifier_contract"]
+        self.verifier_key = starknet["verifier_key"]
 
         discord = config["discord"]
         self.discord_api_endpoint = discord["api_endpoint"]

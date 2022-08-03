@@ -1,104 +1,79 @@
 from verifications.discord import start_discord
 from verifications.twitter import start_twitter
-from account.account import assert_id
+from verifications.common import generate_signature
 from aiohttp import web
 import aiohttp_cors
-import asyncio
 
 
 class WebServer:
-    def __init__(self, conf, account) -> None:
+    def __init__(self, conf) -> None:
         self.conf = conf
-        self.account = account
-        self.tokens = {}
 
-    async def remove_token(self, reference):
-        await asyncio.sleep(60 * 30)
-        if reference in self.tokens:
-            del self.tokens[reference]
-
-    async def start_process(self, request):
+    async def sign(self, request):
         params = await request.json()
+        verif_type = params["type"]
+        token_id_low = int(params["token_id_low"])
+        token_id_high = int(params["token_id_high"])
 
-        reference = params["reference"]
-        if len(reference) > 32:
-            return web.json_response({"status": "error", "error": "invalid reference"})
-
-        type = params["type"]
-        if type not in ["discord", "twitter"]:
+        if verif_type not in ["discord", "twitter"]:
             return web.json_response({"status": "error", "error": "invalid type"})
 
-        if type == "discord":
+        if verif_type == "discord":
             code = params["code"]
             try:
                 user_id, username, discriminator = await start_discord(self.conf, code)
+                (sign0, sign1) = generate_signature(
+                    token_id_low,
+                    token_id_high,
+                    28263441981469284,
+                    int(user_id),
+                    self.conf.verifier_key,
+                )
+                return web.json_response(
+                    {
+                        "status": "success",
+                        "user_id": user_id,
+                        "username": username,
+                        "discriminator": discriminator,
+                        "sign0": sign0,
+                        "sign1": sign1,
+                    }
+                )
             except Exception:
                 return web.json_response(
                     {"status": "error", "error": "unable to query discord data"}
                 )
-            self.tokens[reference] = int(user_id)
-            asyncio.create_task(self.remove_token(reference))
 
-            return web.json_response(
-                {
-                    "status": "success",
-                    "id": user_id,
-                    "username": username,
-                    "discriminator": discriminator,
-                }
-            )
-
-        if type == "twitter":
+        elif verif_type == "twitter":
             code = params["code"]
             try:
                 user_id, username, name = await start_twitter(self.conf, code)
-                print(user_id, username, name)
+                (sign0, sign1) = generate_signature(
+                    token_id_low,
+                    token_id_high,
+                    32782392107492722,
+                    int(user_id),
+                    self.conf.verifier_key,
+                )
+                return web.json_response(
+                    {
+                        "status": "success",
+                        "user_id": user_id,
+                        "username": username,
+                        "name": name,
+                        "sign0": sign0,
+                        "sign1": sign1,
+                    }
+                )
             except Exception:
                 return web.json_response(
                     {"status": "error", "error": "unable to query twitter data"}
                 )
-            self.tokens[reference] = int(user_id)
-            asyncio.create_task(self.remove_token(reference))
-
-            return web.json_response(
-                {
-                    "status": "success",
-                    "id": user_id,
-                    "username": username,
-                    "name": name,
-                }
-            )
-
-        return web.json_response({"status": "error", "error": "invalid type"})
-
-    async def verify(self, request):
-        params = await request.json()
-        try:
-            type = params["type"]
-            if type not in ["discord", "twitter"]:
-                return web.json_response({"status": "error", "error": "invalid type"})
-            nftid = params["nftid"]
-
-            try:
-                if type in ["discord", "twitter"]:
-                    reference = params["reference"]
-                    user_id = self.tokens[reference]
-                    await assert_id(self.account, nftid, type, user_id)
-                    txid = await self.account.confirm_validity(nftid, type, user_id)
-                else:
-                    txid = 0
-            except Exception:
-                return web.json_response({"status": "error", "error": "invalid proof"})
-
-            return web.json_response({"status": "success", "txid": txid})
-
-        except KeyError:
-            return web.json_response({"status": "error", "error": "invalid request"})
+        return web.json_response({"status": "error", "error": "unexpected issue"})
 
     def build_app(self):
         app = web.Application()
-        app.add_routes([web.post("/start_process", self.start_process)])
-        app.add_routes([web.post("/verify", self.verify)])
+        app.add_routes([web.post("/sign", self.sign)])
         cors = aiohttp_cors.setup(
             app,
             defaults={
