@@ -35,8 +35,8 @@ class WebServer:
                         "user_id": user_id,
                         "username": username,
                         "discriminator": discriminator,
-                        "sign0": str(sign0),
-                        "sign1": str(sign1),
+                        "sign0": str(hex(sign0)),
+                        "sign1": str(hex(sign1)),
                     }
                 )
             except Exception:
@@ -61,8 +61,8 @@ class WebServer:
                         "user_id": user_id,
                         "username": username,
                         "name": name,
-                        "sign0": str(sign0),
-                        "sign1": str(sign1),
+                        "sign0": str(hex(sign0)),
+                        "sign1": str(hex(sign1)),
                     }
                 )
             except Exception:
