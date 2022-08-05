@@ -41,3 +41,8 @@ class TomlConfig(Config):
         twitter = config["twitter"]
         self.twitter_api_endpoint = twitter["api_endpoint"]
         self.twitter_client_id = twitter["client_id"]
+
+        github = config["github"]
+        self.github_api_endpoint = github["api_endpoint"]
+        self.github_client_id = github["client_id"]
+        self.github_client_secret = github["client_secret"]
