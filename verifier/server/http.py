@@ -78,7 +78,7 @@ class WebServer:
                 (sign0, sign1) = generate_signature(
                     token_id_low,
                     token_id_high,
-                    32782392107492722,
+                    113702622229858,
                     str_to_felt(node_id), 
                     self.conf.verifier_key,
                 )
