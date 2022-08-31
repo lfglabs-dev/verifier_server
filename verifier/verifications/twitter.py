@@ -11,7 +11,7 @@ async def start_twitter(conf, code):
                 "code": code,
                 "grant_type": "authorization_code",
                 "client_id": conf.twitter_client_id,
-                "redirect_uri": "https://starknet.id/twitter",
+                "redirect_uri": "https://goerli.app.starknet.id/twitter",
                 "code_verifier": "challenge",
                 "scope": "identify",
             },
