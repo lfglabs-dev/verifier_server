@@ -5,6 +5,7 @@ from verifications.utils import str_to_felt
 from verifications.common import generate_signature
 from aiohttp import web
 import aiohttp_cors
+import traceback
 import time
 
 
@@ -16,7 +17,7 @@ class WebServer:
         params = await request.json()
         verif_type = params["type"]
         token_id = int(params["token_id"])
-        timestamp = time.time() + 3600
+        timestamp = int(time.time()) + 3600
 
         if verif_type not in ["discord", "twitter", "github"]:
             return web.json_response({"status": "error", "error": "invalid type"})
@@ -44,6 +45,7 @@ class WebServer:
                     }
                 )
             except Exception:
+                print(traceback.format_exc())
                 return web.json_response(
                     {"status": "error", "error": "unable to query discord data"}
                 )
@@ -71,6 +73,7 @@ class WebServer:
                     }
                 )
             except Exception:
+                print(traceback.format_exc())
                 return web.json_response(
                     {"status": "error", "error": "unable to query twitter data"}
                 )
@@ -97,6 +100,7 @@ class WebServer:
                     }
                 )
             except Exception:
+                print(traceback.format_exc())
                 return web.json_response(
                     {"status": "error", "error": "unable to query github data"}
                 )
