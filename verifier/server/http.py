@@ -5,6 +5,7 @@ from verifications.utils import str_to_felt
 from verifications.common import generate_signature
 from aiohttp import web
 import aiohttp_cors
+import time
 
 
 class WebServer:
@@ -14,8 +15,8 @@ class WebServer:
     async def sign(self, request):
         params = await request.json()
         verif_type = params["type"]
-        token_id_low = int(params["token_id_low"])
-        token_id_high = int(params["token_id_high"])
+        token_id = int(params["token_id"])
+        timestamp = time.time() + 3600
 
         if verif_type not in ["discord", "twitter", "github"]:
             return web.json_response({"status": "error", "error": "invalid type"})
@@ -25,8 +26,8 @@ class WebServer:
             try:
                 user_id, username, discriminator = await start_discord(self.conf, code)
                 (sign0, sign1) = generate_signature(
-                    token_id_low,
-                    token_id_high,
+                    token_id,
+                    timestamp,
                     28263441981469284,
                     int(user_id),
                     self.conf.verifier_key,
@@ -34,6 +35,7 @@ class WebServer:
                 return web.json_response(
                     {
                         "status": "success",
+                        "timestamp": timestamp,
                         "user_id": user_id,
                         "username": username,
                         "discriminator": discriminator,
@@ -51,8 +53,8 @@ class WebServer:
             try:
                 user_id, username, name = await start_twitter(self.conf, code)
                 (sign0, sign1) = generate_signature(
-                    token_id_low,
-                    token_id_high,
+                    token_id,
+                    timestamp,
                     32782392107492722,
                     int(user_id),
                     self.conf.verifier_key,
@@ -60,6 +62,7 @@ class WebServer:
                 return web.json_response(
                     {
                         "status": "success",
+                        "timestamp": timestamp,
                         "user_id": user_id,
                         "username": username,
                         "name": name,
@@ -76,16 +79,17 @@ class WebServer:
                 code = params["code"]
                 node_id, username, name = await start_github(self.conf, code)
                 (sign0, sign1) = generate_signature(
-                    token_id_low,
-                    token_id_high,
+                    token_id,
+                    timestamp,
                     113702622229858,
-                    str_to_felt(node_id), 
+                    str_to_felt(node_id),
                     self.conf.verifier_key,
                 )
                 return web.json_response(
                     {
                         "status": "success",
-                        "user_id": node_id, 
+                        "timestamp": timestamp,
+                        "user_id": node_id,
                         "username": username,
                         "name": name,
                         "sign0": str(hex(sign0)),
@@ -93,7 +97,9 @@ class WebServer:
                     }
                 )
             except Exception:
-                return web.json_response({"status": "error", "error": "unable to query github data"})
+                return web.json_response(
+                    {"status": "error", "error": "unable to query github data"}
+                )
 
     def build_app(self):
         app = web.Application()
