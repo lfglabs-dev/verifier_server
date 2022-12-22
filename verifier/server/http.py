@@ -80,19 +80,19 @@ class WebServer:
         elif verif_type == "github":
             try:
                 code = params["code"]
-                node_id, username, name = await start_github(self.conf, code)
+                id, username, name = await start_github(self.conf, code)
                 (sign0, sign1) = generate_signature(
                     token_id,
                     timestamp,
                     113702622229858,
-                    str_to_felt(node_id),
+                    str_to_felt(id),
                     self.conf.verifier_key,
                 )
                 return web.json_response(
                     {
                         "status": "success",
                         "timestamp": timestamp,
-                        "user_id": node_id,
+                        "user_id": id,
                         "username": username,
                         "name": name,
                         "sign0": str(hex(sign0)),
