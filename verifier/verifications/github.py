@@ -30,8 +30,8 @@ async def start_github(conf, code):
             raise WrongRequestException()
 
         content = await resp.json()
-        id = content["id"]
+        user_id = content["id"]
         username = content["login"]
         name = content["name"]
 
-        return id, username, name
+        return user_id, username, name
