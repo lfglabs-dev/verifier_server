@@ -85,7 +85,7 @@ class WebServer:
                     token_id,
                     timestamp,
                     113702622229858,
-                    str_to_felt(user_id),
+                    user_id,
                     self.conf.verifier_key,
                 )
                 return web.json_response(
