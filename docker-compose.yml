@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+
+  verifier:
+    container_name: verifier
+    build: .
+    command: python -u verifier
+    restart: always
+    ports:
+      - 8083:8083
+    volumes:
+      - ./_docker/starknet-id-verifier:/verifier/data

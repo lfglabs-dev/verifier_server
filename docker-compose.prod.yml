@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+
+  verifier:
+    container_name: verifier
+    build: .
+    command: python -u verifier
+    restart: always
+    ports:
+      - 8083:8083
+    volumes:
+      - ./_docker/starknet-id-verifier:/verifier/data
+
+  nginx:
+    image: valian/docker-nginx-auto-ssl
+    restart: on-failure
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ssl_data:/etc/resty-auto-ssl
+    environment:
+      ALLOWED_DOMAINS: 'verifier.starknet.id'
+      SITES: 'verifier.starknet.id=verifier:8083'
+
+volumes:
+  ssl_data:
