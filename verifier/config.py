@@ -37,12 +37,15 @@ class TomlConfig(Config):
         self.discord_api_endpoint = discord["api_endpoint"]
         self.discord_client_id = discord["client_id"]
         self.discord_client_secret = discord["client_secret"]
+        self.discord_redirect_uri = discord["redirect_uri"]
 
         twitter = config["twitter"]
         self.twitter_api_endpoint = twitter["api_endpoint"]
         self.twitter_client_id = twitter["client_id"]
+        self.twitter_redirect_uri = twitter["redirect_uri"]
 
         github = config["github"]
         self.github_api_endpoint = github["api_endpoint"]
         self.github_client_id = github["client_id"]
         self.github_client_secret = github["client_secret"]
+        self.github_redirect_uri = github["redirect_uri"]

@@ -12,7 +12,7 @@ async def start_discord(conf, code):
                 "code": code,
                 "client_id": conf.discord_client_id,
                 "client_secret": conf.discord_client_secret,
-                "redirect_uri": "https://goerli.app.starknet.id/discord",
+                "redirect_uri": conf.discord_redirect_uri,
                 "scope": "identify",
             },
             headers={"Content-Type": "application/x-www-form-urlencoded"},

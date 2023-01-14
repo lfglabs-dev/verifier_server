@@ -13,12 +13,15 @@ verifier_key = 11111111111111111111111111111111111111111111111111111111111111111
 api_endpoint = "https://discord.com/api/v10"
 client_id = "11111111111111111111111111111111"
 client_secret = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+redirect_uri = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 [twitter]
 api_endpoint = "https://api.twitter.com/2"
 client_id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+redirect_uri = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 [github]
 api_endpoint = "https://github.com/login"
 client_id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 client_secret = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+redirect_uri = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

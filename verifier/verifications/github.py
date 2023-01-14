@@ -11,7 +11,7 @@ async def start_github(conf, code):
                 "code": code,
                 "client_id": conf.github_client_id,
                 "client_secret": conf.github_client_secret,
-                "redirect_uri": "https://goerli.app.starknet.id/github",
+                "redirect_uri": conf.github_redirect_uri,
             },
             headers={"Accept": "application/json"},
         )
