@@ -18,6 +18,8 @@ async def start_twitter(conf, code):
             headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
         if resp.status != 200:
+            content = await resp.text()
+            print(f"[error] [twitter] status: {resp.status}, message: {content}")
             raise WrongRequestException()
 
         content = await resp.json()
